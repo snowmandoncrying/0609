@@ -9,4 +9,23 @@ content.jsp와 updateForm.jsp 그리고 updatePro.jsp 부분을 스프링부트�
 
 BoardController.java
   @RequestMapping("/board/*") - 리퀘스트 매핑으로 /board/가 일괄 적용 된다는 뜻이다. 이건 매핑주소에 /board/를 생략하기 위한 작업이다. 홈페이지를 실행할 때엔 /board/writeForm 이렇게 실행해야 한다.
-  
+
+CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Delete - drop 삭제)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
