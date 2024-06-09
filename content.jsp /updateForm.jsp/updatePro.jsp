@@ -14,7 +14,7 @@ CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Dele
 
 ----------------------------------------
 # BoardService.java
-
+// 게시판에 글을 쓰는 방법을 설명해주는 코드
 public void boardCreate(BoardDTO boardDTO) {
 		int maxNum = boardMapper.maxNum();		// 데이터베이스에서 가장 큰 글 번호를 가져옴
 		if(boardDTO.getNum()!=0) {		// 답글인지 새 글인지를 확인. 0이 아니면 답글, 0이면 새 글
@@ -29,9 +29,10 @@ public void boardCreate(BoardDTO boardDTO) {
 		}
 		boardMapper.boardInsert(boardDTO);	// 새 글을 데이터베이스에 저장
 	}
-
-
-게시판에 글을 쓰는 방법을 설명해주는 코드
+// list 랑 count 결과를 각각 보내줘야해서 서비스를 나누었음
+public int countAll() {
+	return  boardMapper.countAll();
+	}
 
 
 
