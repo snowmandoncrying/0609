@@ -12,8 +12,26 @@ BoardController.java
 
 CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Delete - drop 삭제)
 
+----------------------------------------
+# BoardService.java
+
+public void boardCreate(BoardDTO boardDTO) {
+		int maxNum = boardMapper.maxNum();		// 데이터베이스에서 가장 큰 글 번호를 가져옴
+		if(boardDTO.getNum()!=0) {		// 답글인지 새 글인지를 확인. 0이 아니면 답글, 0이면 새 글
+			boardMapper.reStepUp(boardDTO);	// 다른 답글들의 순서를 바꾸는 작업
+			boardDTO.setRe_step(boardDTO.getRe_step()+1);	// 값 설정
+			boardDTO.setRe_level(boardDTO.getRe_level()+1);
+		}else {	// 0이면 새 글
+			if(maxNum != 1) {		// 새 글이면 maxNum 값을 1 더해줌
+				maxNum += 1;
+			} 
+			boardDTO.setRef(maxNum);	// boardDTO 의 ref 값을 새 번호로 설정
+		}
+		boardMapper.boardInsert(boardDTO);	// 새 글을 데이터베이스에 저장
+	}
 
 
+게시판에 글을 쓰는 방법을 설명해주는 코드
 
 
 
