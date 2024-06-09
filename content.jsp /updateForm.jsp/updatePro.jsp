@@ -14,8 +14,8 @@ CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Dele
 
 ----------------------------------------
 # BoardService.java
-// 게시판에 글을 쓰는 방법을 설명해주는 코드
-public void boardCreate(BoardDTO boardDTO) {
+	// 게시판에 글을 쓰는 방법을 설명해주는 코드
+	public void boardCreate(BoardDTO boardDTO) {
 		int maxNum = boardMapper.maxNum();		// 데이터베이스에서 가장 큰 글 번호를 가져옴
 		if(boardDTO.getNum()!=0) {		// 답글인지 새 글인지를 확인. 0이 아니면 답글, 0이면 새 글
 			boardMapper.reStepUp(boardDTO);	// 다른 답글들의 순서를 바꾸는 작업
@@ -29,19 +29,28 @@ public void boardCreate(BoardDTO boardDTO) {
 		}
 		boardMapper.boardInsert(boardDTO);	// 새 글을 데이터베이스에 저장
 	}
-// list 랑 count 결과를 각각 보내줘야해서 서비스를 나누었음
-public int countAll() {
-	return  boardMapper.countAll();
+	// list 랑 count 결과를 각각 보내줘야해서 서비스를 나누었음
+	public int countAll() {
+		return  boardMapper.countAll();
 	}
-
-// 전체 검색 - 스타트와 엔드가 필요 - count 를 가져오고 list 가 0보다 클 때
-public List<BoardDTO> boardReadAll(int start, int end){
-	return boardMapper.boardList(start, end);
+	// 전체 검색 - 스타트와 엔드가 필요 - count 를 가져오고 list 가 0보다 클 때
+	// 게시판에서 여러 개의 글을 가져오는 역할 - start end 라는 숫자를 받아서 그 사이에 있는 글들을 가져옴
+	// boardList 를 호출해서 글 목록을 가져옴
+	public List<BoardDTO> boardReadAll(int start, int end){
+			return boardMapper.boardList(start, end);
 	}
-// 조회수 - 리드카운트 - 조회수 글을 올려주고 해당 값으로 리턴 
-public  BoardDTO readNum(int num) {
-	boardMapper.readcountUp(num);
-	return boardMapper.boardNum(num);
+	// 조회수 - 리드카운트 - 조회수 글을 올려주고 해당 값으로 리턴 
+	// 글 번호를 받아서, 먼저 그 글의 조회수를 1 증가시킴
+	// 보드 매퍼의 리드카운트 업을 호출해서 조회수를 올림
+	// 조회수를 올린 후 보드넘을 호출해서 글 번호에 해당하는 글을 가져오고 반환해줌
+	public  BoardDTO readNum(int num) {
+		boardMapper.readcountUp(num);
+		return boardMapper.boardNum(num);
+	}
+	// 업데이트 폼 - 수정 (위랑 동일한데 조회수는 올려주면 안됨)
+	// 수정하기 위해 글 번호를 받아서 보드넘을 호출해서 그 번호에 해당하는 글을 가져오고 반환해줌
+	public  BoardDTO updateForm(int num) {
+		return boardMapper.boardNum(num);
 	}
 
 
