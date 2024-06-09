@@ -34,7 +34,15 @@ public int countAll() {
 	return  boardMapper.countAll();
 	}
 
-
+// 전체 검색 - 스타트와 엔드가 필요 - count 를 가져오고 list 가 0보다 클 때
+public List<BoardDTO> boardReadAll(int start, int end){
+	return boardMapper.boardList(start, end);
+	}
+// 조회수 - 리드카운트 - 조회수 글을 올려주고 해당 값으로 리턴 
+public  BoardDTO readNum(int num) {
+	boardMapper.readcountUp(num);
+	return boardMapper.boardNum(num);
+	}
 
 
 
