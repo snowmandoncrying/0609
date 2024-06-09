@@ -63,7 +63,17 @@ CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Dele
 		}
 		return result;	// 결과 반환 - 업데이트가 성공했는지 실패했는지를 알려줌
 	}
-
+	// 딜리트 프로 - 비밀번호가 맞아야함 (폼에서 입력받은 비번이랑 db 에 저장되어있는 비번이랑) 업데이트랑 동일
+	// 리포지토리 안 비밀번호랑 dto 의 글번호를 가져옴
+	// 데이터베이스에 저장된 비밀번호랑 사용자가 입력한 비밀번호가 같으면 글을 삭제시키고 성공 여부 값을 반환함
+	public int deletePro(BoardDTO boardDTO) {
+		int result = 0;
+		String dbPw = boardMapper.passwdNum(boardDTO.getNum());
+		if(dbPw.equals(boardDTO.getPasswd())) {
+			result = boardMapper.boardDelete(boardDTO.getNum());
+		}
+		return result;
+	}
 
 
 
