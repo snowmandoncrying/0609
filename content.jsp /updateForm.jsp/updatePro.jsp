@@ -52,6 +52,17 @@ CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Dele
 	public  BoardDTO updateForm(int num) {
 		return boardMapper.boardNum(num);
 	}
+	// 업데이트 프로 - 비밀번호가 맞아야 게시판 수정 가능 (폼에서 입력받은 비번이랑 db 에 저장되어있는 비번이랑)
+	public int updatePro(BoardDTO boardDTO) {
+		int result = 0;	// 업데이트 성공 여부를 나타내는 변수
+		String dbPw = boardMapper.passwdNum(boardDTO.getNum());		// 비밀번호 가져오기
+		// 데이터베이스에 저장된 비밀번호를 가져옴. 수정하려는 글의 번호도 가져옴
+		// 그 번호에 해당하는 글의 비밀번호를 얻을 수 있음
+		if(dbPw.equals(boardDTO.getPasswd())) {	// 비밀번호 비교하기 - 이퀄스 메서드를 사용해서 데이터베이스에 있는 비밀번호와 사용자가 입력한 비밀번호를 비교함
+			result = boardMapper.boardUpdate(boardDTO);	// 같으면 보드업데이트를 호출해서 글을 수정함
+		}
+		return result;	// 결과 반환 - 업데이트가 성공했는지 실패했는지를 알려줌
+	}
 
 
 
