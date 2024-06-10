@@ -75,7 +75,84 @@ CRUD (Create - insert 삽입/ Read - select 검색 / Update -alert 수정 / Dele
 		return result;
 	}
 
+----------------------------------
+BoardController.java
 
+package com.board.controller;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.board.data.BoardDTO;
+import com.board.service.BoardService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/board/*")
+
+public class BoardController {
+	private final BoardService boardService;
+	// 리퀘스트매핑으로 /board/가 일괄적용됨 그래서 매핑주소에 생략해야함 - 실행할땐 /보드/붙여줘야함
+	// 롸이트폼에서 답글쓰기 어쩌고 파라미터 받아야하니까 
+	@GetMapping("writeForm")
+	public String writeForm(BoardDTO boardDTO) {
+		return "writeForm";
+	}
+	
+	@PostMapping("writePro")
+	// 폼에서 파라미터는 자동으로 넘어가니까 우리는 아이피만 넣어주면 된다.
+	public String writePro(BoardDTO boardDTO, HttpServletRequest request) {
+		boardDTO.setIp(request.getRemoteAddr());
+		boardService.boardCreate(boardDTO);
+		return "redirect:/board/list";
+	}
+	// pageNum 은 dto 에 없기 때문에 따로 받아야한다 - 파라미터이름이 페이지넘 - 없으면 기본값 1을 넣어주겠다.
+	// 게시판 글 목록을 보여주는 역할
+	@GetMapping("list")
+	// 사용자가 보고싶은 페이지 번호를 받음. 입력하지 않으면 기본값은 1번 페이지 
+	public String list(Model model, @RequestParam(name="pageNum",defaultValue = "1") int pageNum) {
+		int pageSize = 10;		// 한 페이지에 보여줄 글의 개수
+		int currentPage =pageNum;	// 현재 보고 있는 페이지 번호 설정
+	    int start = (currentPage - 1) * pageSize + 1;	// 현재 페이지에서 첫 번째로 보여줄 글의 번호 계산
+	    int end = currentPage * pageSize;	// 현재 페이지에서 마지막으로 보여줄 글의 번호 계산
+	    int count = boardService.countAll(); // 데이터베이스에서 전체 글의 개수를 가져옴 - list 로 리턴
+	
+	    List<BoardDTO> list = null;	    // 글 목록을 저장할 변수 선언
+	    if(count > 0) {		// 전체 글의 개수가 0보다 크면
+	    	list = boardService.boardReadAll(start, end);	// 시작 글 번호와 끝 글 번호 사이의 글들을 가져옴	    	
+	    }
+	    int pageCount = count / pageSize + ( count % pageSize == 0 ? 0 : 1);	// 전체 글의 개수를 페이지 크리고 나눠 필요한 전체 페이지 수를 계산
+        int startPage = (int)(currentPage/10)*10+1;	// 현재 페이지에서 시작 페이지 번호를 계산
+		int pageBlock=10;	// 한 번에 보여줄 페이지 번호 개수 설정
+        int endPage = startPage + pageBlock-1;	// 현재 페이지에서 끝 페이지 번호 계산
+        if (endPage > pageCount) {	// 끝 페이지 번호가 전체 페이지 수를 넘으면 끝 페이지 번호를 전체 페이지 수로 맞춤
+        	endPage = pageCount;	}
+                
+	    // 위에 있는 변수를 똑같이 다 보내주는 것 - 계산한 값들을 모델에 추가해서, 나중에 웹 페이지에서 사용할 수 있게 함
+	    model.addAttribute("pageCount",pageCount);
+	    model.addAttribute("startPage",startPage);
+	    model.addAttribute("pageBlock",pageBlock);
+	    model.addAttribute("endPage",endPage);
+        
+        model.addAttribute("pageSize", pageSize);
+	    model.addAttribute("pageNum", pageNum);
+	    model.addAttribute("start", start);
+	    model.addAttribute("end", end);
+	    model.addAttribute("count", count);
+	    model.addAttribute("list", list);
+		
+	    return "list";		// list라는 이름의 웹 페이지를 보여줘라 >> 사용자가 웹 페이지에서 게시판의 글 목록을 페이지별로 볼 수 있게 됨
+	}
 
 
 
